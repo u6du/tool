@@ -18,14 +18,17 @@ NEXT:
 		_, private, err := ed25519.GenerateKey(rand.Reader)
 		ex.Panic(err)
 		public := base85.EncodeToString(private.Public().(ed25519.PublicKey))
-		if strings.Index(strings.ToLower(public), "6du") != 0 {
-			continue
-		}
-		println("> ", public)
+
 		for _, c := range "<>&`$%=-|@{}()*#;_!^?~+" {
 			if strings.Index(public, string(c)) >= 0 {
 				continue NEXT
 			}
+		}
+
+		println("> ", public)
+
+		if strings.Index(strings.ToLower(public), "6du") < 0 {
+			continue
 		}
 
 		filepath := "6du.private"
