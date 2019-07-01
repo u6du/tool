@@ -27,7 +27,7 @@ NEXT:
 
 		println("> ", public)
 
-		if strings.Index(strings.ToLower(public), "6du") < 0 {
+		if strings.Index(strings.ToLower(public), "6") < 0 {
 			continue
 		}
 
