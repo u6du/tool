@@ -13,22 +13,26 @@ import (
 )
 
 func run(ch chan string) {
+	count := 0
 NEXT:
 	for {
+		if count%10000 == 0 {
+			println("> ", count)
+		}
+		count++
+
 		_, private, err := ed25519.GenerateKey(rand.Reader)
 		ex.Panic(err)
 		public := base85.EncodeToString(private.Public().(ed25519.PublicKey))
+
+		if strings.Index(strings.ToLower(public), "6du") < 0 {
+			continue
+		}
 
 		for _, c := range "<>&`$%=-|@{}()*#;_!^?~+" {
 			if strings.Index(public, string(c)) >= 0 {
 				continue NEXT
 			}
-		}
-
-		println("> ", public)
-
-		if strings.Index(strings.ToLower(public), "6") < 0 {
-			continue
 		}
 
 		filepath := "6du.private"
