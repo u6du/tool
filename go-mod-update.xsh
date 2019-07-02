@@ -16,6 +16,7 @@ def main():
             cd @(dirpath)
             go get -u
             go mod tidy
+            git add -u
             git commit -m "go get -u"
             git pull
             git push
