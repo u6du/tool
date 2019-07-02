@@ -25,7 +25,7 @@ NEXT:
 		ex.Panic(err)
 		public := base85.EncodeToString(private.Public().(ed25519.PublicKey))
 
-		if strings.Index(strings.ToLower(public), "6du") < 0 {
+		if strings.Index(strings.ToLower(public), "6du") != 0 {
 			continue
 		}
 
