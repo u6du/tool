@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/u6du/ex"
 	"golang.org/x/crypto/blake2b"
 )
 
@@ -22,7 +23,7 @@ func next(msg []byte) []byte {
 	return make([]byte, len(msg)+1)
 }
 
-func Begin0Count(msg [32]byte) (n uint) {
+func Begin0Count(msg []byte) (n uint) {
 
 	for i := range msg {
 		if msg[i] == 0 {
@@ -35,20 +36,29 @@ func Begin0Count(msg [32]byte) (n uint) {
 	return
 }
 
-func main() {
-	var msg []byte
-	atLest := uint(2)
+func Begin0MoreThan(msg []byte, n uint) []byte {
+	var salt []byte
+	atLest := uint(3)
 	begin := uint64(time.Now().UnixNano())
 	count := uint(0)
 
 	for {
-		msg = next(msg)
-		hash := blake2b.Sum256(msg)
-		if Begin0Count(hash) > atLest {
+		salt = next(salt)
+		hasher, err := blake2b.New256(msg)
+
+		ex.Panic(err)
+		hash := hasher.Sum(salt)
+
+		if Begin0Count(hash) >= atLest {
 			count += 1
 			cost := (uint64(time.Now().UnixNano()) - begin) / uint64(time.Millisecond) / uint64(count)
-			fmt.Printf("%dms/hash %d %d msg %x hash %x\n", cost, count, len(msg), msg, hash)
+			fmt.Printf("%dms/hash %d %d salt %x hash %x\n", cost, count, len(msg), msg, hash)
+			return salt
 		}
-
 	}
+}
+
+func main() {
+
+	Begin0MoreThan([]byte("1gxxxzzcccabcde"), 2)
 }
