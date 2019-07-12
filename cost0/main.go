@@ -63,7 +63,7 @@ func main() {
 	var msg []byte
 	for {
 		msg = next(msg)
-		salt := Begin0MoreThan([]byte(msg), 22)
+		salt := Begin0MoreThan([]byte(msg), 23)
 		fmt.Printf("%x\n\n", blake2b.Sum256(append(msg, salt...)))
 	}
 }
