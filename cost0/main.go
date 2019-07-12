@@ -3,6 +3,7 @@ package main
 
 import (
 	"fmt"
+	"math/bits"
 	"time"
 
 	"github.com/u6du/ex"
@@ -23,12 +24,12 @@ func next(msg []byte) []byte {
 	return make([]byte, len(msg)+1)
 }
 
-func Begin0Count(msg []byte) (n uint) {
+func Begin0Count(msg []byte) (n int) {
 
 	for i := range msg {
-		if msg[i] == 0 {
-			n++
-		} else {
+		t := bits.OnesCount8(uint8(0) ^ msg[i])
+		n += t
+		if t != 8 {
 			break
 		}
 	}
@@ -36,18 +37,18 @@ func Begin0Count(msg []byte) (n uint) {
 	return
 }
 
-func Begin0MoreThan(msg []byte, n uint) []byte {
+func Begin0MoreThan(msg []byte, atLest int) []byte {
 	var salt []byte
-	atLest := uint(3)
 	begin := uint64(time.Now().UnixNano())
 	count := uint(0)
 
 	for {
 		salt = next(salt)
-		hasher, err := blake2b.New256(msg)
-
+		hasher, err := blake2b.New256(nil)
+		hasher.Write(msg)
+		hasher.Write(salt)
 		ex.Panic(err)
-		hash := hasher.Sum(salt)
+		hash := hasher.Sum(nil)
 
 		if Begin0Count(hash) >= atLest {
 			count += 1
@@ -59,6 +60,10 @@ func Begin0MoreThan(msg []byte, n uint) []byte {
 }
 
 func main() {
-
-	Begin0MoreThan([]byte("1gxxxzzcccabcde"), 2)
+	var msg []byte
+	for {
+		msg = next(msg)
+		salt := Begin0MoreThan([]byte(msg), 22)
+		fmt.Printf("%x\n\n", blake2b.Sum256(append(msg, salt...)))
+	}
 }
