@@ -46,7 +46,7 @@ func main() {
 		hash := blake2b.Sum256(msg)
 		if Begin0Count(hash) > atLest {
 			count += 1
-			cost := (uint64(time.Now().UnixNano()) - begin)/uint64(time.Millisecond)/uint64(count)
+			cost := (uint64(time.Now().UnixNano()) - begin) / uint64(time.Millisecond) / uint64(count)
 			fmt.Printf("%dms/hash %d %d msg %x hash %x\n", cost, count, len(msg), msg, hash)
 		}
 
